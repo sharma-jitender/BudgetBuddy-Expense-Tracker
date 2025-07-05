@@ -1,5 +1,4 @@
 import React from "react";
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,7 +12,7 @@ import Home from "./pages/Dashboard/Home";
 import Income from "./pages/Dashboard/Income";
 import Expense from "./pages/Dashboard/Expense";
 import UserProvider from "./context/userContext";
-import {Toaster } from "react-hot-toast"
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   return (
@@ -29,16 +28,15 @@ const App = () => {
             <Route path="/expense" exact element={<Expense />} />
           </Routes>
         </Router>
+        <Toaster
+          toastOptions={{
+            className: "",
+            style: {
+              fontSize: "13px",
+            },
+          }}
+        />
       </div>
-
-       <Toaster
-        toastOptions={{
-          className: "",
-          style: {
-            fontSize: "13px",
-          },
-        }}
-      />
     </UserProvider>
   );
 };
