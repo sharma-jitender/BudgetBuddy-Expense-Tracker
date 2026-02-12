@@ -7,14 +7,15 @@ const authRoutes = require("./routes/authRoutes");
 const incomeRoutes = require("./routes/incomeRoutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const budgetLimitRoutes = require("./routes/budgetLimitRoutes");
 const app = express();
-
+const plaidRoutes = require("./routes/plaidRoutes");
 
 app.use(
     cors({
         origin: process.env.CLIENT_URL || "*",
         methods:["GET", "POST", "PUT", "DELETE"],
-        allowedHeaders: ["Content-Type, Authorization"]
+        allowedHeaders: ["Content-Type", "Authorization"]
     })
 );
 
@@ -28,7 +29,8 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/income", incomeRoutes);
 app.use("/api/v1/expense", expenseRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
-
+app.use("/api/v1/budget-limit", budgetLimitRoutes);
+app.use('/api/plaid', plaidRoutes);
 
 //serve uplaods folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

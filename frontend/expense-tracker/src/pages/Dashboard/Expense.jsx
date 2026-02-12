@@ -5,10 +5,10 @@ import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apipath";
 import toast from "react-hot-toast";
 import ExpenseOverview from "../../components/Expense/ExpenseOverview";
-import Modal from "../../components/Modal";
-import AddExpenseForm from "../../components/Expense/AddExpenseForm";
 import ExpenseList from "../../components/Expense/ExpenseList";
 import DeleteAlert from "../../components/DeleteAlert";
+import QuickAddFAB from "../../components/QuickAdd/QuickAddFAB";
+import Modal from "../../components/Modal";
 
 
 const Expense = () => {
@@ -132,14 +132,21 @@ const Expense = () => {
 
   return (
     <DashboardLayout activeMenu="Expense">
-      <div className="my-5 mx-auto">
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-50 mb-2">
+            Expenses
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Track and manage your expenses
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 gap-6">
-          <div className="">
-            <ExpenseOverview
-              transactions={expenseData}
-              onAddExpense={() => setOpenAddExpenseModal(true)}
-            />
-          </div>
+          <ExpenseOverview
+            transactions={expenseData}
+            onAddExpense={() => {}}
+          />
           <ExpenseList
             transaction={expenseData}
             onDelete={(id) => {
@@ -149,14 +156,11 @@ const Expense = () => {
           />
         </div>
 
-        <Modal
-          isOpen={OpenAddExpenseModal}
-          onClose={() => setOpenAddExpenseModal(false)}
-          title="Add Expense"
-        >
-          <AddExpenseForm onAddExpense={handleAddExpense} />
-
-        </Modal>
+        {/* Quick Add FAB */}
+        <QuickAddFAB
+          onAddExpense={handleAddExpense}
+          type="expense"
+        />
 
         <Modal
           isOpen={openDeleteAlert.show}

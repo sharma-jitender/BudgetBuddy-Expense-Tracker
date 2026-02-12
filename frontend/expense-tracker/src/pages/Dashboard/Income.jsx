@@ -4,10 +4,10 @@ import IncomeOverview from "../../components/Income/IncomeOverview";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apipath";
 import Modal from "../../components/Modal";
-import AddIncomeForm from "../../components/Income/AddIncomeForm";
 import toast from "react-hot-toast";
 import IncomeList from "../../components/Income/IncomeList";
 import DeleteAlert from "../../components/DeleteAlert";
+import QuickAddFAB from "../../components/QuickAdd/QuickAddFAB";
 const Income = () => {
   const [incomeData, setIncomeData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -126,15 +126,22 @@ const Income = () => {
   }, []);
 
   return (
-    <DashboardLayout>
-      <div className="my-5 mx-auto">
-        <div className="grid grid-cols-1 ggap-6">
-          <div className="">
-            <IncomeOverview
-              transactions={incomeData}
-              onAddIncome={() => setOpenAddIncomeModal(true)}
-            />
-          </div>
+    <DashboardLayout activeMenu="Income">
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-50 mb-2">
+            Income
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Track and manage your income sources
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6">
+          <IncomeOverview
+            transactions={incomeData}
+            onAddIncome={() => {}}
+          />
 
           <IncomeList
             transaction={incomeData}
@@ -145,13 +152,11 @@ const Income = () => {
           />
         </div>
 
-        <Modal
-          isOpen={OpenAddIncomeModal}
-          onClose={() => setOpenAddIncomeModal(false)}
-          title="Add Income"
-        >
-          <AddIncomeForm onAddIncome={handleAddIncome} />
-        </Modal>
+        {/* Quick Add FAB */}
+        <QuickAddFAB
+          onAddIncome={handleAddIncome}
+          type="income"
+        />
 
         <Modal
           isOpen={openDeleteAlert.show}

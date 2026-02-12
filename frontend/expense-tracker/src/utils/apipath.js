@@ -1,4 +1,5 @@
-export const BASE_URL = "https://budgetbuddy-backend-ujb7.onrender.com";
+export const BASE_URL =
+  import.meta.env.VITE_BASE_URL || "https://budgetbuddy-backend-ujb7.onrender.com";
 
 //utils/apiPaths.js
 export const API_PATHS = {
@@ -21,6 +22,13 @@ export const API_PATHS = {
     GET_ALL_EXPENSE: "/api/v1/expense/get",
     DELETE_EXPENSE: (expenseId) => `/api/v1/expense/${expenseId}`,
     DOWNLOAD_EXPENSE: `/api/v1/expense/downloadexcel`,
+  },
+  BUDGET_LIMIT: {
+    GET_CURRENT: "/api/v1/budget-limit/current",
+    SET_LIMIT: "/api/v1/budget-limit/set",
+    GET_BY_MONTH: (month) => `/api/v1/budget-limit/month/${month}`,
+    DELETE_BY_MONTH: (month) => `/api/v1/budget-limit/month/${month}`,
+    CHECK_EXPENSE: "/api/v1/budget-limit/check-expense",
   },
   IMAGE: {
     UPLOAD_IMAGE: "/api/v1/auth/upload-image",

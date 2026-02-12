@@ -1,43 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+/* Use class-based dark mode so ThemeContext toggle works (Tailwind v4 defaults to prefers-color-scheme) */
+@custom-variant dark (&&:where(.dark, .dark *));
+
 @theme{
-  --font-display: "Poppins", "sans-serif";
+  --font-display: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --breakpoint-3xl: 1920px;
-  --color-primary:#875cf5;
+  --color-primary: #6366f1;
 }
 
 @layer base{
+  * {
+    @apply transition-colors duration-200;
+  }
+  
   html{
-    font-family:var(--font-display);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   body{
-    background-color: #fcfbfc;
+    @apply bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-50;
     overflow-x: hidden;
   }
 }
 
 .input-box {
-  @apply w-full flex justify-between gap-3 text-sm text-black bg-slate-100 rounded px-4 py-3 mb-4 mt-3 border border-slate-200 outline-none;
+  @apply w-full flex justify-between gap-3 text-sm text-gray-900 dark:text-gray-50 bg-gray-50 dark:bg-gray-900 rounded-xl px-4 py-3 mb-4 mt-3 border border-gray-200 dark:border-gray-800 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary;
 }
 
 .btn-primary {
-  @apply w-full text-sm font-medium text-white bg-violet-500 shadow-lg shadow-purple-600/5 p-[10px] rounded-md my-1 hover:bg-purple-600/15 hover:text-purple-600;
+  @apply w-full text-sm font-medium text-white bg-primary shadow-lg shadow-primary/10 p-[10px] rounded-xl my-1 hover:bg-primary/90 transition-all;
 }
 
 .card {
-  @apply bg-white p-6 rounded-2xl shadow-md shadow-gray-100 border border-gray-200/50;
+  @apply bg-white dark:bg-gray-900 p-6 rounded-[24px] shadow-sm shadow-gray-100/50 dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-800;
 }
 
 .card-btn {
-  @apply flex items-center gap-3 text-[12px] font-medium text-gray-700 hover:text-purple-500 bg-gray-50 hover:bg-purple-50 px-4 py-1.5 rounded-lg border border-gray-200/50 cursor-pointer;
+  @apply flex items-center gap-3 text-xs font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary bg-gray-50 dark:bg-gray-800 hover:bg-primary/5 dark:hover:bg-primary/10 px-4 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer transition-all;
 }
 
 .add-btn{
-  @apply flex items-center gap-1.5 text-xs md:text-sm font-medium text-purple-600 whitespace-nowrap bg-purple-50 border border-purple-100 rounded-lg px-4 py-2 cursor-pointer;
+  @apply flex items-center gap-1.5 text-xs md:text-sm font-medium text-primary whitespace-nowrap bg-primary/10 dark:bg-primary/20 border border-primary/20 dark:border-primary/30 rounded-xl px-4 py-2 cursor-pointer hover:bg-primary/20 dark:hover:bg-primary/30 transition-all;
 }
 
 .add-btn-fill{
-  @apply text-white bg-primary
+  @apply text-white bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20
 }

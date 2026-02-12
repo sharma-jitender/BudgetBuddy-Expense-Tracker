@@ -23,14 +23,14 @@ const SideMenu = ({ activeMenu }) => {
   };
 
   return (
-    <div className="w-64 h-screen lg:h-[calc(100vh-61px)] bg-white border-r border-gray-200 p-5 lg:sticky lg:top-[61px] z-20">
+    <div className="w-64 h-screen lg:h-[calc(100vh-64px)] bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 p-5 lg:sticky lg:top-[64px] z-20">
       {/* Profile section */}
       <div className="flex flex-col items-center justify-center gap-3 mt-3 mb-7">
         {user?.profileImageUrl ? (
           <img
             src={user.profileImageUrl}
             alt="Profile"
-            className="w-20 h-20 rounded-full bg-slate-400 object-cover"
+            className="w-20 h-20 rounded-full bg-gray-200 dark:bg-gray-700 object-cover border-2 border-gray-200 dark:border-gray-700"
           />
         ) : (
           <CharAvatar
@@ -41,7 +41,7 @@ const SideMenu = ({ activeMenu }) => {
           />
         )}
 
-        <h5 className="leading-6 font-medium text-gray-950 text-center">
+        <h5 className="leading-6 font-medium text-gray-900 dark:text-gray-50 text-center">
           {user?.fullName || ""}
         </h5>
       </div>
@@ -52,9 +52,9 @@ const SideMenu = ({ activeMenu }) => {
           key={`menu_${index}`}
           className={`w-full flex items-center gap-4 text-[15px] ${
             activeMenu === item.label
-              ? "text-white bg-primary"
-              : "text-gray-800 hover:bg-gray-100"
-          } py-3 px-6 rounded-lg mb-3 transition duration-200`}
+              ? "text-white bg-primary dark:bg-primary shadow-lg shadow-primary/20"
+              : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+          } py-3 px-6 rounded-xl mb-2 transition-all duration-200 font-medium`}
           onClick={() => handleClick(item.path)}
         >
           <item.icon className="text-xl" />

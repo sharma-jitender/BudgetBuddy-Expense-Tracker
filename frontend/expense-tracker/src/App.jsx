@@ -11,33 +11,40 @@ import Login from "./pages/Auth/Login";
 import Home from "./pages/Dashboard/Home";
 import Income from "./pages/Dashboard/Income";
 import Expense from "./pages/Dashboard/Expense";
+import Budget from "./pages/Dashboard/Budget";
 import UserProvider from "./context/UserContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import { Toaster } from "react-hot-toast";
+import BankConnection from "./pages/BankConnection";
 
 const App = () => {
   return (
-    <UserProvider>
-      <div>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Root />} />
-            <Route path="/login" exact element={<Login />} />
-            <Route path="/signUp" exact element={<SignUp />} />
-            <Route path="/dashboard" exact element={<Home />} />
-            <Route path="/income" exact element={<Income />} />
-            <Route path="/expense" exact element={<Expense />} />
-          </Routes>
-        </Router>
-        <Toaster
-          toastOptions={{
-            className: "",
-            style: {
-              fontSize: "13px",
-            },
-          }}
-        />
-      </div>
-    </UserProvider>
+    <ThemeProvider>
+      <UserProvider>
+        <div>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Root />} />
+              <Route path="/login" exact element={<Login />} />
+              <Route path="/signUp" exact element={<SignUp />} />
+              <Route path="/dashboard" exact element={<Home />} />
+              <Route path="/income" exact element={<Income />} />
+              <Route path="/expense" exact element={<Expense />} />
+              <Route path="/budget" exact element={<Budget />} />
+              <Route path="/bank-connection" exact element={<BankConnection />} />
+            </Routes>
+          </Router>
+          <Toaster
+            toastOptions={{
+              className: "",
+              style: {
+                fontSize: "13px",
+              },
+            }}
+          />
+        </div>
+      </UserProvider>
+    </ThemeProvider>
   );
 };
 
