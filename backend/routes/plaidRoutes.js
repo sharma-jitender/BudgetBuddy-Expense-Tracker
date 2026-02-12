@@ -4,7 +4,7 @@ const plaidClient = require('../config/plaid');
 const PlaidItem = require('../models/PlaidItem');
 const Expense = require('../models/Expense');
 const Income = require('../models/Income');
-const { protect } = require('../middleware/auth'); // Your auth middleware
+const { protect } = require('../middleware/authMiddleware'); 
 
 // 1. Create Link Token
 router.post('/create_link_token', protect, async (req, res) => {
