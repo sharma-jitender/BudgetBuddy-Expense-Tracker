@@ -1,5 +1,5 @@
 export const BASE_URL =
-  import.meta.env.VITE_BASE_URL || "https://budgetbuddy-backend-ujb7.onrender.com";
+  import.meta.env.VITE_BASE_URL || "http://localhost:8000";
 
 //utils/apiPaths.js
 export const API_PATHS = {
@@ -10,6 +10,7 @@ export const API_PATHS = {
   },
   DASHBOARD: {
     GET_DATA: "/api/v1/dashboard",
+    GET_MONTHLY_DATA: "/api/v1/dashboard/monthly",
   },
   INCOME: {
     ADD_INCOME: "/api/v1/income/add",

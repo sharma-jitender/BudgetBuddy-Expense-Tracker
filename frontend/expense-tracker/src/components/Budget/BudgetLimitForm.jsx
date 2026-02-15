@@ -2,22 +2,46 @@ import React, { useState, useEffect } from "react";
 import Input from "../Inputs/input";
 import addThousandsSeprator from "../../utils/helper";
 
-const BudgetLimitForm = ({ currentBudget, onSubmit, onCancel }) => {
+const BudgetLimitForm = ({ currentBudget, onSubmit, onCancel, selectedMonth }) => {
   const [formData, setFormData] = useState({
+    month: "",
     overallLimit: "",
     categoryLimits: [],
   });
   const [newCategory, setNewCategory] = useState({ category: "", limit: "" });
   const [errors, setErrors] = useState({});
 
+  // Get current month and next 11 months for selection
+  const getAvailableMonths = () => {
+    const months = [];
+    const now = new Date();
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(now.getFullYear(), now.getMonth() + i, 1);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const monthStr = `${year}-${month}`;
+      const monthName = date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
+      months.push({ value: monthStr, label: monthName });
+    }
+    return months;
+  };
+
   useEffect(() => {
+    const defaultMonth = selectedMonth || new Date().toISOString().slice(0, 7);
     if (currentBudget) {
       setFormData({
+        month: currentBudget.month || defaultMonth,
         overallLimit: currentBudget.overallLimit || "",
         categoryLimits: currentBudget.categoryLimits || [],
       });
+    } else {
+      setFormData({
+        month: defaultMonth,
+        overallLimit: "",
+        categoryLimits: [],
+      });
     }
-  }, [currentBudget]);
+  }, [currentBudget, selectedMonth]);
 
   const handleOverallLimitChange = (e) => {
     const value = e.target.value.replace(/[^0-9]/g, "");
@@ -83,6 +107,7 @@ const BudgetLimitForm = ({ currentBudget, onSubmit, onCancel }) => {
     }
 
     onSubmit({
+      month: formData.month,
       overallLimit: parseFloat(formData.overallLimit),
       categoryLimits: formData.categoryLimits,
     });
@@ -96,6 +121,23 @@ const BudgetLimitForm = ({ currentBudget, onSubmit, onCancel }) => {
       <h2 className="text-xl font-semibold mb-4">Set Monthly Budget</h2>
       
       <form onSubmit={handleSubmit}>
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Select Month
+          </label>
+          <select
+            value={formData.month}
+            onChange={(e) => setFormData({ ...formData, month: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            {getAvailableMonths().map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="mb-6">
           <Input
             label="Overall Monthly Budget"

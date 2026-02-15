@@ -5,6 +5,18 @@ import CustomLineChart from "../Charts/CustomLineChart";
 
 const ExpenseOverview = ({transactions, onAddExpense}) => {
     const [chartData, setChartData] = useState();
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    // Detect dark mode
+    useEffect(() => {
+      const checkDarkMode = () => {
+        setIsDarkMode(document.documentElement.classList.contains('dark'));
+      };
+      checkDarkMode();
+      const observer = new MutationObserver(checkDarkMode);
+      observer.observe(document.documentElement, { attributes: true });
+      return () => observer.disconnect();
+    }, []);
 
     useEffect(() => {
         const result = prepareExpenseLineChartData(transactions);
@@ -29,7 +41,7 @@ const ExpenseOverview = ({transactions, onAddExpense}) => {
         </div>
 
         <div className="mt-10">
-            <CustomLineChart data={chartData} />
+            <CustomLineChart data={chartData} isDarkMode={isDarkMode} />
         </div>
     </div>
 }

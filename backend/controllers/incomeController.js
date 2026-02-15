@@ -1,16 +1,13 @@
 const User = require("../models/User");
 const xlsx = require('xlsx')
 const Income = require("../models/Income");
-const { writeXLSX } = require("xlsx");
 
-//Add Income Source 
 exports.addIncome = async (req, res) => {
     const userId = req.user.id;
 
     try{
-        const { icon, source, amount, date} = req.body;
+        const { icon, source, amount, date, title } = req.body;
 
-        //check for missing fields
         if( !source || !amount || !date) {
             return res.status(400).json({ message: "All fields are required"});
         }
@@ -20,17 +17,19 @@ exports.addIncome = async (req, res) => {
             icon,
             source,
             amount,
-            date: new Date(date)
+            date: new Date(date),
+            title: title || source,
+            dataSource: "manual"
         });
 
         await newIncome.save();
         res.status(200).json(newIncome);
     } catch(error) {
-        res.status(500).json({message: "Server Error"});
+        console.error("Error adding income:", error);
+        res.status(500).json({message: "Server Error", error: error.message});
     }
 
 }
-//Get All Income Source 
 exports.getAllIncome = async (req, res) => {
     const userId = req.user.id;
 
@@ -38,26 +37,25 @@ exports.getAllIncome = async (req, res) => {
         const income = await Income.find({ userId }).sort({ date: -1});
         res.json(income);
     } catch (error) {
-        res.status(500).json({ message: "Server Error "});
+        console.error("Error fetching income:", error);
+        res.status(500).json({ message: "Server Error", error: error.message });
     }
 }
-//Delete Income Source 
 exports.deleteIncome = async (req, res) => {
     try { 
         await Income.findByIdAndDelete(req.params.id);
         res.json({ message: "Income deleted successfully"});
     } catch (error) {
-        res.status(500).json({ message: "Server Error"});
+        console.error("Error deleting income:", error);
+        res.status(500).json({ message: "Server Error", error: error.message });
     }
 }
 
-//Download Excel
 exports.downloadIncomeExcel = async (req, res) => {
     const userId = req.user.id;
     try { 
         const income = await Income.find({ userId }).sort({ date: -1 });
 
-        // prepare data for excel
         const data = income.map((item) => ({
             Source: item.source,
             Amount: item.amount, 

@@ -1,52 +1,107 @@
-Budget Buddy
+# Expense Tracker
 
-Budget Buddy is a simple and intuitive expense tracker web application that helps users manage their finances by tracking their income and expenses. Whether you're a student, working professional, or managing a household, Budget Buddy empowers you to stay on top of your spending habits.
+An expense tracking web application that helps users manage their finances by recording income and expenses, tracking spending patterns, and managing budgets.
 
-Features
-Add and manage income & expense entries
-Visual insights with charts (if implemented)
-Date-wise filtering of transactions
-Easy-to-use UI for quick tracking
-User authentication and secure access (if applicable)
+## Features
 
-Tech Stack
-Frontend: React.js, Tailwind CSS
-Backend: Node.js, Express.js
-Database: MongoDB
-Others: Axios, Mongoose, Moment.js
+- Add and manage income and expense entries
+- Visual analytics with charts and reports
+- Transaction history with date filtering
+- Budget management and spending alerts
+- User authentication and secure access
+- Bank account integration (optional)
+- Subscription detection and tracking
+- Excel export functionality
 
-Installation & Setup
-Prerequisites
-Node.js and npm installed
-MongoDB installed or access to MongoDB Atlas
-Git
-Steps
-Clone the repository
-git clone git@github.com:your-username/budget-buddy.git cd budget-buddy Install dependencies
+## Tech Stack
 
-bash
+**Frontend:**
+- React.js with Vite
+- Tailwind CSS for styling
+- Axios for API requests
+- React Router for navigation
+- React Hot Toast for notifications
 
-For both frontend and backend
-cd client npm install
+**Backend:**
+- Node.js with Express.js
+- MongoDB for database
+- Mongoose for ODM
+- JWT for authentication
+- Multer for file uploads
 
-cd ../server npm install Configure environment variables
+## Project Structure
 
-Create a .env file in the /server folder and add:
+```
+ExpenseTracker/
+├── frontend/expense-tracker/    # React frontend application
+├── backend/                      # Express backend server
+└── README.md
+```
 
-ini MONGODB_URI=your_mongodb_connection_string JWT_SECRET=your_jwt_secret Start the server
+## Installation
 
-bash cd server npm start Start the client
+### Prerequisites
 
-bash cd ../client npm start  Authentication (Optional) If your app includes authentication, users will be able to:
+- Node.js (v14 or higher)
+- npm or yarn
+- MongoDB Atlas account or local MongoDB
 
-Register and login securely
+### Setup Instructions
 
-Track personal transactions privately
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd ExpenseTracker
+```
 
- Project Structure bash Copy code budget-buddy/ │ ├── frontend/ # React frontend ├── backend/ # Express backend ├── README.md └── .gitignore  Author Your Name – @yourhandle
+2. Install backend dependencies:
+```bash
+cd backend
+npm install
+```
 
- License This project is licensed under the MIT License.
+3. Install frontend dependencies:
+```bash
+cd ../frontend/expense-tracker
+npm install
+```
 
-🙌Contributions Pull requests and suggestions are welcome! If you'd like to improve Budget Buddy, feel free to fork the repo and submit a PR.
+4. Configure environment variables:
+
+Create `.env` file in the backend directory:
+```
+MONGO_URL=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+PORT=5000
+CLIENT_URL=http://localhost:5173
+```
+
+5. Start the backend server:
+```bash
+cd backend
+npm start
+```
+
+6. Start the frontend application:
+```bash
+cd frontend/expense-tracker
+npm run dev
+```
+
+## Usage
+
+1. Register a new account or log in
+2. Add income and expense entries
+3. View analytics on the dashboard
+4. Set monthly budgets and track spending
+5. Export transaction history as Excel files
+
+## License
+
+This project is licensed under the MIT License.
+
+## Contributing
+
+Contributions are welcome. Please submit issues and pull requests for improvements.
 
 Live Link https://budgetbuddy-frontend-5zwl.onrender.com/login

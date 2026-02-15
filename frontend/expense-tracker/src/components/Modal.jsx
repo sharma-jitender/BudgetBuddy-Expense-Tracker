@@ -38,9 +38,9 @@ const Modal = ({ children, isOpen, onClose, title }) => {
     >
       <div className="relative p-4 w-full max-w-2xl max-h-full">
         {/* Modal content */}
-        <div className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+        <div className="relative bg-white rounded-lg shadow-sm dark:bg-gray-800 dark:text-white">
           {/* Modal header */}
-          <div className="flex items-center justify-between p-4 md:p-4 border-b rounded-t border-gray-200 dark:border-gray-600">
+          <div className="flex items-center justify-between p-4 md:p-4 border-b rounded-t border-gray-200 dark:border-gray-700">
             <h3
               id="modal-title"
               className="text-lg font-medium text-gray-900 dark:text-white"
@@ -50,7 +50,7 @@ const Modal = ({ children, isOpen, onClose, title }) => {
 
             <button
               type="button"
-              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-700 dark:hover:text-white"
               onClick={onClose}
               aria-label="Close modal"
             >

@@ -10,7 +10,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const budgetLimitRoutes = require("./routes/budgetLimitRoutes");
 const app = express();
 const plaidRoutes = require("./routes/plaidRoutes");
-
+const subscriptionRoutes = require("./routes/subscriptionRoutes");
 app.use(
     cors({
         origin: process.env.CLIENT_URL || "*",
@@ -31,9 +31,9 @@ app.use("/api/v1/expense", expenseRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/budget-limit", budgetLimitRoutes);
 app.use('/api/plaid', plaidRoutes);
-
+app.use('/api/subscriptions', subscriptionRoutes);
 //serve uplaods folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server is runnng on port ${PORT}`))
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`))

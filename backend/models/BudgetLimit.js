@@ -10,7 +10,6 @@ const BudgetLimitSchema = new mongoose.Schema(
     month: {
       type: String,
       required: true,
-      // Format: "YYYY-MM" (e.g., "2024-01")
     },
     overallLimit: {
       type: Number,
@@ -38,7 +37,6 @@ const BudgetLimitSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Compound index to ensure one budget limit per user per month
 BudgetLimitSchema.index({ userId: 1, month: 1 }, { unique: true });
 
 module.exports = mongoose.model("BudgetLimit", BudgetLimitSchema);

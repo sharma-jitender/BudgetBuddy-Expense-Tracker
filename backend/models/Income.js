@@ -18,12 +18,12 @@ const IncomeSchema = new mongoose.Schema(
     },
     merchantName: { type: String },
     pending: { type: Boolean, default: false },
-    source: {
+    dataSource: {
       type: String,
       enum: ["manual", "plaid"],
       default: "manual",
     },
-    
+    source: { type: String },
     icon: { type: String },
    
     title: { type: String, required: true },

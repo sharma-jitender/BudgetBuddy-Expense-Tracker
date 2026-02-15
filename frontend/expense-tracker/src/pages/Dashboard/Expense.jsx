@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useUserAuth } from "../../hooks/userUserAuth";
+import { useUserAuth } from "../../hooks/useUserAuth";
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apipath";
@@ -18,7 +18,7 @@ const Expense = () => {
   const [loading, setLoading] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
     show: false,
-    date: null,
+    data: null,
   });
   const [OpenAddExpenseModal, setOpenAddExpenseModal] = useState(false);
 
@@ -37,7 +37,7 @@ const Expense = () => {
         setExpenseData(response.data);
       }
     } catch (error) {
-      console.log("Something went wrong. Please try again.", error);
+      console.error("Error fetching expense data:", error);
     } finally {
       setLoading(false);
     }
@@ -98,7 +98,7 @@ const Expense = () => {
   };
 
   // Handle Download Expense details
-  const handleDownloadExpesneDetails = async () => {
+  const handleDownloadExpenseDetails = async () => {
   try {
     const response = await axiosInstance.get(
       API_PATHS.EXPENSE.DOWNLOAD_EXPENSE,
@@ -125,8 +125,6 @@ const Expense = () => {
 
   useEffect(() => {
     fetchExpenseDetails();
-
-    return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -145,14 +143,13 @@ const Expense = () => {
         <div className="grid grid-cols-1 gap-6">
           <ExpenseOverview
             transactions={expenseData}
-            onAddExpense={() => {}}
           />
           <ExpenseList
             transaction={expenseData}
             onDelete={(id) => {
               setOpenDeleteAlert({ show: true, data: id });
             }}
-            onDownload={handleDownloadExpesneDetails}
+            onDownload={handleDownloadExpenseDetails}
           />
         </div>
 

@@ -13,7 +13,7 @@ const Income = () => {
   const [loading, setLoading] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
     show: false,
-    date: null,
+    data: null,
   });
   const [OpenAddIncomeModal, setOpenAddIncomeModal] = useState(false);
 
@@ -32,7 +32,7 @@ const Income = () => {
         setIncomeData(response.data);
       }
     } catch (error) {
-      console.log("Something went wrong. Please try again.", error);
+      console.error("Error fetching income data:", error);
     } finally {
       setLoading(false);
     }
@@ -140,7 +140,6 @@ const Income = () => {
         <div className="grid grid-cols-1 gap-6">
           <IncomeOverview
             transactions={incomeData}
-            onAddIncome={() => {}}
           />
 
           <IncomeList

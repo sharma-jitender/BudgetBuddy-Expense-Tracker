@@ -85,7 +85,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
             type="button"
             onClick={checkBudget}
             disabled={isCheckingBudget}
-            className="w-full bg-blue-50 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50"
+            className="w-full bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-200 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors disabled:opacity-50"
           >
             {isCheckingBudget ? "Checking Budget..." : "Check Budget Impact"}
           </button>
@@ -95,7 +95,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
       {/* Budget Check Results */}
       {budgetCheck && (
         <div className={`mt-4 p-3 rounded-lg border ${
-          budgetCheck.canAdd ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+          budgetCheck.canAdd ? 'bg-green-50 dark:bg-green-900 border-green-200 dark:border-green-700' : 'bg-red-50 dark:bg-red-900 border-red-200 dark:border-red-700'
         }`}>
           <div className="flex items-center gap-2 mb-2">
             {budgetCheck.canAdd ? (
@@ -104,7 +104,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
               <FiAlertTriangle className="text-red-500" />
             )}
             <span className={`font-medium ${
-              budgetCheck.canAdd ? 'text-green-700' : 'text-red-700'
+              budgetCheck.canAdd ? 'text-green-700 dark:text-green-200' : 'text-red-700 dark:text-red-200'
             }`}>
               {budgetCheck.canAdd ? 'Budget Check Passed' : 'Budget Warning'}
             </span>
@@ -113,12 +113,12 @@ const AddExpenseForm = ({ onAddExpense }) => {
           {budgetCheck.warnings.length > 0 && (
             <div className="space-y-1">
               {budgetCheck.warnings.map((warning, index) => (
-                <p key={index} className="text-sm text-gray-700">{warning}</p>
+                <p key={index} className="text-sm text-gray-700 dark:text-gray-300">{warning}</p>
               ))}
             </div>
           )}
           
-          <div className="mt-2 text-xs text-gray-600">
+          <div className="mt-2 text-xs text-gray-600 dark:text-gray-400">
             Overall Progress: {budgetCheck.overallProgress.toFixed(1)}%
             {budgetCheck.categoryProgress > 0 && (
               <span className="ml-2">

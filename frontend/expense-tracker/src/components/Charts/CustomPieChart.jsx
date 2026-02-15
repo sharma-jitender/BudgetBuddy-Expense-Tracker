@@ -1,6 +1,6 @@
 import React from "react";
-import CustomTooltip from "../Charts/CustomTooltip";
-import CustomLegend from "../Charts/CustomLegend";
+import createCustomTooltip from "../Charts/CustomTooltip";
+import createCustomLegend from "../Charts/CustomLegend";
 import {
   PieChart,
   Pie,
@@ -16,7 +16,11 @@ const CustomPieChart = ({
   totalAmount,
   colors,
   showTextAnchor,
+  isDarkMode = false,
 }) => {
+  const CustomTooltip = createCustomTooltip(isDarkMode);
+  const CustomLegend = createCustomLegend(isDarkMode);
+
   return (
     <ResponsiveContainer width="100%" height={300}>
       <PieChart>
@@ -35,7 +39,7 @@ const CustomPieChart = ({
           ))}
         </Pie>
         <Tooltip content={CustomTooltip}/>
-        <Legend  content={CustomLegend}/>
+        <Legend content={CustomLegend}/>
 
         {showTextAnchor && (
           <>
@@ -44,7 +48,7 @@ const CustomPieChart = ({
               y="50%"
               dy={-25}
               textAnchor="middle"
-              fill="#666"
+              fill={isDarkMode ? '#d1d5db' : '#666'}
               fontSize="14px"
             >
               {label}
@@ -54,7 +58,7 @@ const CustomPieChart = ({
               y="50%"
               dy={8}
               textAnchor="middle"
-              fill="#333"
+              fill={isDarkMode ? '#f3f4f6' : '#333'}
               fontSize="24px"
               fontWeight="semi-bold"
             >

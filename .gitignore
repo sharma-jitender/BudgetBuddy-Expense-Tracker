@@ -1,3 +1,12 @@
 .env
 .env.*
-*.env
+*.envnode_modules/
+dist/
+build/
+.vscode/
+.idea/
+*.local
+*.log
+*.xlsx
+uploads/
+.DS_Store

@@ -9,7 +9,6 @@ const plaidItemSchema = new mongoose.Schema({
   accessToken: {
     type: String,
     required: true,
-    // IMPORTANT: In production, encrypt this!
   },
   itemId: {
     type: String,

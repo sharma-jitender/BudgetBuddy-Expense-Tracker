@@ -12,10 +12,12 @@ import Home from "./pages/Dashboard/Home";
 import Income from "./pages/Dashboard/Income";
 import Expense from "./pages/Dashboard/Expense";
 import Budget from "./pages/Dashboard/Budget";
+import Analytics from "./pages/Dashboard/Analytics";
 import UserProvider from "./context/UserContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { Toaster } from "react-hot-toast";
 import BankConnection from "./pages/BankConnection";
+import Subscriptions from "./pages/Subscriptions";
 
 const App = () => {
   return (
@@ -31,7 +33,9 @@ const App = () => {
               <Route path="/income" exact element={<Income />} />
               <Route path="/expense" exact element={<Expense />} />
               <Route path="/budget" exact element={<Budget />} />
+              <Route path="/analytics" exact element={<Analytics />} />
               <Route path="/bank-connection" exact element={<BankConnection />} />
+              <Route path="/subscriptions" exact element={<Subscriptions />} />
             </Routes>
           </Router>
           <Toaster

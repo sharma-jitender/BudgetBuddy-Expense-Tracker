@@ -5,6 +5,18 @@ const COLORS = ['#875CF5', '#FA2C37', '#FF6900'];
 
 const RecentIncomeWithChart = ({ data, totalIncome }) => {
   const [chartData, setChartData] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Detect dark mode
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    };
+    checkDarkMode();
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true });
+    return () => observer.disconnect();
+  }, []);
 
   const prepareChartData = () => {
     const dataArr = data?.map((item) => ({
@@ -36,6 +48,7 @@ const RecentIncomeWithChart = ({ data, totalIncome }) => {
         totalAmount={`$${totalIncome}`}
         showTextAnchor
         colors={COLORS}
+        isDarkMode={isDarkMode}
       />
     </div>
   );

@@ -16,7 +16,7 @@ const PlaidLinkButton = ({ onSuccess }) => {
         });
         const data = await response.json();
         setLinkToken(data.link_token);
-        console.log(' Link token created');
+        console.log('Link token created');
       } catch (error) {
         console.error(' Error creating link token:', error);
       }
@@ -28,7 +28,7 @@ const PlaidLinkButton = ({ onSuccess }) => {
   const onPlaidSuccess = useCallback(async (public_token, metadata) => {
     setLoading(true);
     try {
-      console.log(' Exchanging public token...');
+      console.log('Exchanging public token...');
       const response = await fetch('http://localhost:8000/api/plaid/exchange_public_token', {
         method: 'POST',
         headers: {
@@ -43,7 +43,7 @@ const PlaidLinkButton = ({ onSuccess }) => {
       const data = await response.json();
       
       if (data.success) {
-        console.log(` Successfully connected to ${metadata.institution.name}`);
+        console.log(`Successfully connected to ${metadata.institution.name}`);
         alert(` Connected to ${metadata.institution.name}!`);
         onSuccess?.();
       }

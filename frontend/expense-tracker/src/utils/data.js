@@ -4,7 +4,9 @@ import {
     LuWalletMinimal,
     LuTarget,
     LuLogOut,
-    LuBanknote, // Add this for bank icon
+    LuBanknote, 
+    LuRepeat,
+    LuTrendingUp
 } from "react-icons/lu";
 
 export const SIDE_MENU_DATA = [
@@ -33,10 +35,22 @@ export const SIDE_MENU_DATA = [
         path: "/budget",
     },
     {
+        id: "08",
+        label: "Analytics",
+        icon: LuTrendingUp,
+        path: "/analytics",
+    },
+    {
         id: "05",
         label: "Bank Connection",
         icon: LuBanknote,
         path: "/bank-connection",
+    },
+    {
+        id : "07",
+        label: "Subscriptions",
+        icon: LuRepeat,
+        path: "/subscriptions",
     },
     {
         id: "06",

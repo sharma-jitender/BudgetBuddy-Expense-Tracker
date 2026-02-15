@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CustomPieChart from "../Charts/CustomPieChart";
 const COLORS = ["#8b5cf6", "#f43f5e", "#f97316"];
 const FinanceOverview = ({ totalBalance, totalIncome, totalExpense }) =>{
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    // Detect dark mode
+    useEffect(() => {
+      const checkDarkMode = () => {
+        setIsDarkMode(document.documentElement.classList.contains('dark'));
+      };
+      checkDarkMode();
+      const observer = new MutationObserver(checkDarkMode);
+      observer.observe(document.documentElement, { attributes: true });
+      return () => observer.disconnect();
+    }, []);
+
     const balanceData = [
         {name: "Total  Balance", amount: totalBalance},
         {name: "Total  Expense", amount: totalExpense},
@@ -17,6 +30,7 @@ const FinanceOverview = ({ totalBalance, totalIncome, totalExpense }) =>{
         totalAmount ={`$${totalBalance}`}
         colors= {COLORS}
         showTextAnchor
+        isDarkMode={isDarkMode}
         />
     </div>
 }

@@ -14,9 +14,9 @@ const BankConnection = () => {
       const response = await fetch('http://localhost:8000/api/plaid/status');
       const data = await response.json();
       setStatus(data);
-      console.log('✅ Plaid Status:', data);
+      console.log(' Plaid Status:', data);
     } catch (error) {
-      console.error('❌ Error fetching status:', error);
+      console.error(' Error fetching status:', error);
     }
   };
 
@@ -26,13 +26,12 @@ const BankConnection = () => {
       const response = await fetch('http://localhost:8000/api/plaid/accounts');
       const data = await response.json();
       setAccounts(data.accounts || []);
-      console.log('✅ Accounts fetched:', data.accounts?.length || 0);
+      console.log('Accounts fetched:', data.accounts?.length || 0);
     } catch (error) {
-      console.error('❌ Error fetching accounts:', error);
+      console.error(' Error fetching accounts:', error);
     }
   };
 
-  // Fetch transactions
   const fetchTransactions = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/plaid/transactions/sync', {
@@ -40,9 +39,9 @@ const BankConnection = () => {
       });
       const data = await response.json();
       setTransactions(data.transactions || []);
-      console.log('✅ Transactions fetched:', data.transactions?.length || 0);
+      console.log('Transactions fetched successfully');
     } catch (error) {
-      console.error('❌ Error fetching transactions:', error);
+      console.error('Error fetching transactions:', error);
     } finally {
       setLoading(false);
     }
@@ -58,7 +57,7 @@ const BankConnection = () => {
   }, []);
 
   const handleSuccess = async () => {
-    console.log('🎉 Bank connected successfully!');
+    console.log('Bank connection established');
     setLoading(true);
     await fetchStatus();
     await fetchAccounts();
@@ -82,7 +81,7 @@ const BankConnection = () => {
         {/* Status Card */}
         <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            📊 Connection Status
+             Connection Status
           </h2>
           {status ? (
             <div className="space-y-2">
@@ -193,13 +192,13 @@ const BankConnection = () => {
           <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                📝 Recent Transactions ({transactions.length})
+                 Recent Transactions ({transactions.length})
               </h2>
               <button
                 onClick={fetchTransactions}
                 className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
               >
-                🔄 Refresh
+                 Refresh
               </button>
             </div>
             <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -251,7 +250,7 @@ const BankConnection = () => {
         {/* Empty State */}
         {!loading && accounts.length === 0 && (
           <div className="bg-gray-50 dark:bg-gray-900 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 p-12 text-center">
-            <div className="text-6xl mb-4">🏦</div>
+            <div className="text-6xl mb-4"></div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               No Banks Connected
             </h3>

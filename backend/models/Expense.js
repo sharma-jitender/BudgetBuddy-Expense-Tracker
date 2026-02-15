@@ -18,12 +18,11 @@ const ExpenseSchema = new mongoose.Schema(
     },
     merchantName: { type: String },
     pending: { type: Boolean, default: false },
-    source: {
+    dataSource: {
       type: String,
       enum: ["manual", "plaid"],
       default: "manual",
     },
-    
     icon: { type: String },
     title: { type: String, required: true }, 
     category: { type: String, required: true },

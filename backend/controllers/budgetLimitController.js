@@ -2,11 +2,10 @@ const BudgetLimit = require("../models/BudgetLimit");
 const Expense = require("../models/Expense");
 const { Types } = require("mongoose");
 
-// Get current month's budget limit
 exports.getCurrentBudgetLimit = async (req, res) => {
   try {
     const userId = req.user.id;
-    const currentMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM" format
+    const currentMonth = new Date().toISOString().slice(0, 7);
 
     let budgetLimit = await BudgetLimit.findOne({
       userId: new Types.ObjectId(userId),
@@ -26,7 +25,6 @@ exports.getCurrentBudgetLimit = async (req, res) => {
       });
     }
 
-    // Calculate current spending for the month
     const startOfMonth = new Date(currentMonth + "-01");
     const endOfMonth = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0);
 
@@ -40,7 +38,6 @@ exports.getCurrentBudgetLimit = async (req, res) => {
 
     const currentSpending = expenses.reduce((sum, expense) => sum + expense.amount, 0);
 
-    // Calculate category-wise spending
     const categorySpending = {};
     expenses.forEach((expense) => {
       if (categorySpending[expense.category]) {
@@ -50,7 +47,6 @@ exports.getCurrentBudgetLimit = async (req, res) => {
       }
     });
 
-    // Calculate progress percentages
     const overallProgress = budgetLimit.overallLimit > 0 ? (currentSpending / budgetLimit.overallLimit) * 100 : 0;
     const isOverBudget = currentSpending > budgetLimit.overallLimit;
 
@@ -67,14 +63,16 @@ exports.getCurrentBudgetLimit = async (req, res) => {
   }
 };
 
-// Create or update budget limit
 exports.setBudgetLimit = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { overallLimit, categoryLimits } = req.body;
-    const currentMonth = new Date().toISOString().slice(0, 7);
+    const { overallLimit, categoryLimits, month } = req.body;
+    const selectedMonth = month || new Date().toISOString().slice(0, 7);
 
-    // Validation
+    if (month && !/^\d{4}-\d{2}$/.test(month)) {
+      return res.status(400).json({ message: "Invalid month format. Use YYYY-MM" });
+    }
+
     if (!overallLimit || overallLimit < 0) {
       return res.status(400).json({ message: "Overall limit must be a positive number" });
     }
@@ -83,7 +81,6 @@ exports.setBudgetLimit = async (req, res) => {
       return res.status(400).json({ message: "Category limits must be an array" });
     }
 
-    // Validate category limits
     if (categoryLimits) {
       for (const catLimit of categoryLimits) {
         if (!catLimit.category || !catLimit.limit || catLimit.limit < 0) {
@@ -94,7 +91,6 @@ exports.setBudgetLimit = async (req, res) => {
       }
     }
 
-    // Check if total category limits don't exceed overall limit
     if (categoryLimits) {
       const totalCategoryLimits = categoryLimits.reduce((sum, cat) => sum + cat.limit, 0);
       if (totalCategoryLimits > overallLimit) {
@@ -104,11 +100,10 @@ exports.setBudgetLimit = async (req, res) => {
       }
     }
 
-    // Upsert budget limit
     const budgetLimit = await BudgetLimit.findOneAndUpdate(
       {
         userId: new Types.ObjectId(userId),
-        month: currentMonth,
+        month: selectedMonth,
       },
       {
         overallLimit,
@@ -128,11 +123,10 @@ exports.setBudgetLimit = async (req, res) => {
   }
 };
 
-// Get budget limit for a specific month
 exports.getBudgetLimitByMonth = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { month } = req.params; // Format: "YYYY-MM"
+    const { month } = req.params;
 
     if (!month || !/^\d{4}-\d{2}$/.test(month)) {
       return res.status(400).json({ message: "Invalid month format. Use YYYY-MM" });
@@ -156,7 +150,6 @@ exports.getBudgetLimitByMonth = async (req, res) => {
       });
     }
 
-    // Calculate spending for the specified month
     const startOfMonth = new Date(month + "-01");
     const endOfMonth = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0);
 
@@ -170,13 +163,12 @@ exports.getBudgetLimitByMonth = async (req, res) => {
 
     const currentSpending = expenses.reduce((sum, expense) => sum + expense.amount, 0);
 
-    // Calculate category-wise spending
-    const categorySpending = {};
+    const categorySpendingTwo = {};
     expenses.forEach((expense) => {
-      if (categorySpending[expense.category]) {
-        categorySpending[expense.category] += expense.amount;
+      if (categorySpendingTwo[expense.category]) {
+        categorySpendingTwo[expense.category] += expense.amount;
       } else {
-        categorySpending[expense.category] = expense.amount;
+        categorySpendingTwo[expense.category] = expense.amount;
       }
     });
 
@@ -186,7 +178,7 @@ exports.getBudgetLimitByMonth = async (req, res) => {
     res.json({
       ...budgetLimit.toObject(),
       currentSpending,
-      categorySpending,
+      categorySpending: categorySpendingTwo,
       isOverBudget,
       overallProgress: Math.round(overallProgress * 100) / 100,
     });
@@ -196,7 +188,6 @@ exports.getBudgetLimitByMonth = async (req, res) => {
   }
 };
 
-// Delete budget limit
 exports.deleteBudgetLimit = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -222,7 +213,6 @@ exports.deleteBudgetLimit = async (req, res) => {
   }
 };
 
-// Check if adding an expense would exceed budget
 exports.checkBudgetBeforeExpense = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -244,7 +234,6 @@ exports.checkBudgetBeforeExpense = async (req, res) => {
       });
     }
 
-    // Calculate current spending
     const startOfMonth = new Date(currentMonth + "-01");
     const endOfMonth = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0);
 
@@ -259,7 +248,6 @@ exports.checkBudgetBeforeExpense = async (req, res) => {
     const currentSpending = expenses.reduce((sum, expense) => sum + expense.amount, 0);
     const newTotalSpending = currentSpending + amount;
 
-    // Calculate category spending
     const categorySpending = expenses
       .filter(expense => expense.category === category)
       .reduce((sum, expense) => sum + expense.amount, 0);
@@ -268,7 +256,6 @@ exports.checkBudgetBeforeExpense = async (req, res) => {
     const warnings = [];
     let canAdd = true;
 
-    // Check overall budget
     const overallProgress = (newTotalSpending / budgetLimit.overallLimit) * 100;
     if (newTotalSpending > budgetLimit.overallLimit) {
       warnings.push(`This expense would exceed your overall monthly budget by $${(newTotalSpending - budgetLimit.overallLimit).toFixed(2)}`);
@@ -277,7 +264,6 @@ exports.checkBudgetBeforeExpense = async (req, res) => {
       warnings.push(`This expense would use ${overallProgress.toFixed(1)}% of your monthly budget`);
     }
 
-    // Check category budget
     const categoryLimit = budgetLimit.categoryLimits.find(cat => cat.category === category);
     if (categoryLimit) {
       const categoryProgress = (newCategorySpending / categoryLimit.limit) * 100;

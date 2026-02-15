@@ -4,9 +4,8 @@ const plaidClient = require('../config/plaid');
 const PlaidItem = require('../models/PlaidItem');
 const Expense = require('../models/Expense');
 const Income = require('../models/Income');
-const { protect } = require('../middleware/authMiddleware'); 
+const { protect } = require('../middleware/authMiddleware');
 
-// 1. Create Link Token
 router.post('/create_link_token', protect, async (req, res) => {
   try {
     const request = {
@@ -27,7 +26,6 @@ router.post('/create_link_token', protect, async (req, res) => {
   }
 });
 
-// 2. Exchange Public Token & Save to DB
 router.post('/exchange_public_token', protect, async (req, res) => {
   try {
     const { public_token, institution } = req.body;
@@ -72,7 +70,6 @@ router.post('/exchange_public_token', protect, async (req, res) => {
   }
 });
 
-// 3. Get User's Connected Accounts
 router.get('/accounts', protect, async (req, res) => {
   try {
     const plaidItems = await PlaidItem.find({ 
@@ -113,7 +110,6 @@ router.get('/accounts', protect, async (req, res) => {
   }
 });
 
-// 4. Sync Transactions & Save to DB
 router.post('/transactions/sync', protect, async (req, res) => {
   try {
     const plaidItems = await PlaidItem.find({ 
@@ -145,7 +141,6 @@ router.post('/transactions/sync', protect, async (req, res) => {
         const response = await plaidClient.transactionsGet(request);
         let transactions = response.data.transactions;
 
-        // Handle pagination
         const totalTransactions = response.data.total_transactions;
         while (transactions.length < totalTransactions) {
           const paginatedRequest = {
@@ -156,29 +151,23 @@ router.post('/transactions/sync', protect, async (req, res) => {
           transactions = transactions.concat(paginatedResponse.data.transactions);
         }
 
-        // Save transactions to database
         for (const txn of transactions) {
-          // Plaid: positive amount = expense, negative = income
           const isExpense = txn.amount > 0;
           const Model = isExpense ? Expense : Income;
 
-          // Check if transaction already exists
           const existingTxn = await Model.findOne({
             plaidTransactionId: txn.transaction_id,
           });
 
           if (existingTxn) {
-            // Update if status changed
             if (existingTxn.pending !== txn.pending || existingTxn.amount !== Math.abs(txn.amount)) {
               existingTxn.pending = txn.pending;
               existingTxn.amount = Math.abs(txn.amount);
               await existingTxn.save();
             }
           } else {
-            // Map Plaid category to your categories
             const category = mapPlaidCategory(txn.category);
 
-            // Create new transaction
             const newTransaction = new Model({
               userId: req.user._id,
               plaidTransactionId: txn.transaction_id,
@@ -223,7 +212,6 @@ router.post('/transactions/sync', protect, async (req, res) => {
   }
 });
 
-// Helper function to map Plaid categories to your app's categories
 function mapPlaidCategory(plaidCategories) {
   if (!plaidCategories || plaidCategories.length === 0) return 'Other';
   
@@ -253,7 +241,6 @@ function mapPlaidCategory(plaidCategories) {
   return categoryMap[plaidCategory] || 'other';
 }
 
-// Helper function to get icon for category
 function getCategoryIcon(category) {
   const iconMap = {
     'food': '🍔',
@@ -270,7 +257,6 @@ function getCategoryIcon(category) {
   return iconMap[category.toLowerCase()] || '📝';
 }
 
-// 5. Get Status
 router.get('/status', protect, async (req, res) => {
   try {
     const plaidItems = await PlaidItem.find({ userId: req.user._id });
@@ -291,7 +277,6 @@ router.get('/status', protect, async (req, res) => {
   }
 });
 
-// 6. Disconnect Bank
 router.delete('/item/:item_id', protect, async (req, res) => {
   try {
     const plaidItem = await PlaidItem.findOne({
