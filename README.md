@@ -100,6 +100,6 @@ npm run dev
 
 This project is licensed under the MIT License.
 
-🙌Contributions Pull requests and suggestions are welcome! If you'd like to improve Budget Buddy, feel free to fork the repo and submit a PR.
+Contributions Pull requests and suggestions are welcome! If you'd like to improve Budget Buddy, feel free to fork the repo and submit a PR.
 
 Live Link https://budgetbuddy-frontend-5zwl.onrender.com/login
