@@ -175,7 +175,7 @@ const Analytics = () => {
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 rounded-lg p-6 border border-blue-200 dark:border-blue-700">
             <p className="text-sm font-medium text-blue-600 dark:text-blue-300">Total Income</p>
             <p className="text-3xl font-bold text-blue-900 dark:text-blue-100 mt-2">
-              ${analytics.totalIncome.toFixed(2)}
+              ₹{analytics.totalIncome.toFixed(2)}
             </p>
             <p className="text-xs text-blue-600 dark:text-blue-300 mt-2">This month</p>
           </div>
@@ -183,7 +183,7 @@ const Analytics = () => {
           <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900 dark:to-red-800 rounded-lg p-6 border border-red-200 dark:border-red-700">
             <p className="text-sm font-medium text-red-600 dark:text-red-300">Total Expense</p>
             <p className="text-3xl font-bold text-red-900 dark:text-red-100 mt-2">
-              ${analytics.totalExpense.toFixed(2)}
+              ₹{analytics.totalExpense.toFixed(2)}
             </p>
             <p className="text-xs text-red-600 dark:text-red-300 mt-2">This month</p>
           </div>
@@ -193,7 +193,7 @@ const Analytics = () => {
               Balance
             </p>
             <p className={`text-3xl font-bold ${analytics.balance >= 0 ? 'text-green-900 dark:text-green-100' : 'text-orange-900 dark:text-orange-100'} mt-2`}>
-              ${Math.abs(analytics.balance).toFixed(2)}
+              ₹{Math.abs(analytics.balance).toFixed(2)}
             </p>
             <p className={`text-xs ${analytics.balance >= 0 ? 'text-green-600 dark:text-green-300' : 'text-orange-600 dark:text-orange-300'} mt-2`}>
               {analytics.balance >= 0 ? 'Surplus' : 'Deficit'}
@@ -246,12 +246,12 @@ const Analytics = () => {
             {analytics.categoryBreakdown.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
-                  <Pie
+                    <Pie
                     data={analytics.categoryBreakdown}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, value }) => `${name}: $${value}`}
+                      label={({ name, value }) => `${name}: ₹${value}`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
@@ -267,7 +267,7 @@ const Analytics = () => {
                       borderRadius: '8px',
                       color: isDarkMode ? '#e5e7eb' : '#1f2937'
                     }}
-                    formatter={(value) => `$${value.toFixed(2)}`}
+                    formatter={(value) => `₹${value.toFixed(2)}`}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -293,7 +293,7 @@ const Analytics = () => {
                 {analytics.categoryBreakdown.map((category, idx) => (
                   <tr key={idx} className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-4 py-3 text-gray-900 dark:text-white">{category.name}</td>
-                    <td className="px-4 py-3 text-right text-gray-900 dark:text-white">${category.value.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-right text-gray-900 dark:text-white">₹{category.value.toFixed(2)}</td>
                     <td className="px-4 py-3 text-right text-gray-600 dark:text-gray-300">
                       {((category.value / analytics.totalExpense) * 100).toFixed(1)}%
                     </td>

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
+import { BASE_URL } from '../utils/apipath';
 
 const PlaidLinkButton = ({ onSuccess }) => {
   const [linkToken, setLinkToken] = useState(null);
@@ -8,7 +9,7 @@ const PlaidLinkButton = ({ onSuccess }) => {
   useEffect(() => {
     const createLinkToken = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/plaid/create_link_token', {
+        const response = await fetch(`${BASE_URL}/api/plaid/create_link_token`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -29,7 +30,7 @@ const PlaidLinkButton = ({ onSuccess }) => {
     setLoading(true);
     try {
       console.log('Exchanging public token...');
-      const response = await fetch('http://localhost:8000/api/plaid/exchange_public_token', {
+      const response = await fetch(`${BASE_URL}/api/plaid/exchange_public_token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

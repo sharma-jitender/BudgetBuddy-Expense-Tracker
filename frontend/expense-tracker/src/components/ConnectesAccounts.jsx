@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BASE_URL } from '../utils/apipath';
 
 const ConnectedAccounts = () => {
   const [accounts, setAccounts] = useState([]);
@@ -10,7 +11,7 @@ const ConnectedAccounts = () => {
 
   const fetchAccounts = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/plaid/accounts');
+      const response = await fetch(`${BASE_URL}/api/plaid/accounts`);
       const data = await response.json();
       setAccounts(data.accounts || []);
     } catch (error) {
@@ -63,10 +64,10 @@ const ConnectedAccounts = () => {
               </span>
             </div>
             <p style={{ fontSize: '24px', fontWeight: 'bold', margin: '16px 0 0 0' }}>
-              ${account.balances.current?.toFixed(2) || '0.00'}
+              ₹{account.balances.current?.toFixed(2) || '0.00'}
             </p>
             <p style={{ fontSize: '14px', color: '#666', margin: '4px 0 0 0' }}>
-              Available: ${account.balances.available?.toFixed(2) || '0.00'}
+              Available: ₹{account.balances.available?.toFixed(2) || '0.00'}
             </p>
           </div>
         ))}

@@ -121,20 +121,20 @@ const SpendingGoals = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900 dark:to-purple-800 rounded-lg p-6 border border-purple-200 dark:border-purple-700">
             <p className="text-sm font-medium text-purple-600 dark:text-purple-300">Total Budget</p>
-            <p className="text-3xl font-bold text-purple-900 dark:text-purple-100 mt-2">${totalLimit.toFixed(2)}</p>
+            <p className="text-3xl font-bold text-purple-900 dark:text-purple-100 mt-2">₹{totalLimit.toFixed(2)}</p>
           </div>
 
           <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900 dark:to-orange-800 rounded-lg p-6 border border-orange-200 dark:border-orange-700">
             <p className="text-sm font-medium text-orange-600 dark:text-orange-300">Total Spent</p>
-            <p className="text-3xl font-bold text-orange-900 dark:text-orange-100 mt-2">${totalSpent.toFixed(2)}</p>
+            <p className="text-3xl font-bold text-orange-900 dark:text-orange-100 mt-2">₹{totalSpent.toFixed(2)}</p>
           </div>
 
           <div className={`bg-gradient-to-br ${totalSpent > totalLimit ? 'from-red-50 to-red-100 dark:from-red-900 dark:to-red-800' : 'from-green-50 to-green-100 dark:from-green-900 dark:to-green-800'} rounded-lg p-6 border ${totalSpent > totalLimit ? 'border-red-200 dark:border-red-700' : 'border-green-200 dark:border-green-700'}`}>
             <p className={`text-sm font-medium ${totalSpent > totalLimit ? 'text-red-600 dark:text-red-300' : 'text-green-600 dark:text-green-300'}`}>
               Remaining
             </p>
-            <p className={`text-3xl font-bold ${totalSpent > totalLimit ? 'text-red-900 dark:text-red-100' : 'text-green-900 dark:text-green-100'} mt-2`}>
-              ${Math.abs(totalLimit - totalSpent).toFixed(2)}
+              <p className={`text-3xl font-bold ${totalSpent > totalLimit ? 'text-red-900 dark:text-red-100' : 'text-green-900 dark:text-green-100'} mt-2`}>
+              ₹{Math.abs(totalLimit - totalSpent).toFixed(2)}
             </p>
           </div>
         </div>
@@ -159,7 +159,7 @@ const SpendingGoals = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Spending Limit ($)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Spending Limit (₹)</label>
                 <input
                   type="number"
                   placeholder="100"
@@ -206,7 +206,7 @@ const SpendingGoals = () => {
                     borderRadius: '8px',
                     color: '#e5e7eb'
                   }}
-                  formatter={(value) => `$${value.toFixed(2)}`}
+                  formatter={(value) => `₹${value.toFixed(2)}`}
                 />
                 <Legend />
                 <Bar dataKey="limit" fill="#3B82F6" name="Budget" />
@@ -248,7 +248,7 @@ const SpendingGoals = () => {
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        ${spent.toFixed(2)} / ${goal.limit.toFixed(2)}
+                        ₹{spent.toFixed(2)} / ₹{goal.limit.toFixed(2)}
                       </span>
                       <span className={`text-sm font-semibold ${isOverBudget ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
                         {percentage.toFixed(1)}%
@@ -262,9 +262,9 @@ const SpendingGoals = () => {
                     </div>
                   </div>
 
-                  {isOverBudget && (
+                    {isOverBudget && (
                     <p className="text-sm text-red-600 dark:text-red-400 font-medium">
-                      Over budget by ${(spent - goal.limit).toFixed(2)}
+                      Over budget by ₹{(spent - goal.limit).toFixed(2)}
                     </p>
                   )}
                 </div>

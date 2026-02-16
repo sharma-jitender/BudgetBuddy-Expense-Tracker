@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../components/layouts/DashboardLayout';
 import PlaidLinkButton from '../components/PlaidLinkButton';
+import { BASE_URL } from '../utils/apipath';
 
 const BankConnection = () => {
   const [accounts, setAccounts] = useState([]);
@@ -11,7 +12,7 @@ const BankConnection = () => {
   // Fetch Plaid status
   const fetchStatus = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/plaid/status');
+      const response = await fetch(`${BASE_URL}/api/plaid/status`);
       const data = await response.json();
       setStatus(data);
       console.log(' Plaid Status:', data);
@@ -23,7 +24,7 @@ const BankConnection = () => {
   // Fetch accounts
   const fetchAccounts = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/plaid/accounts');
+      const response = await fetch(`${BASE_URL}/api/plaid/accounts`);
       const data = await response.json();
       setAccounts(data.accounts || []);
       console.log('Accounts fetched:', data.accounts?.length || 0);
@@ -34,7 +35,7 @@ const BankConnection = () => {
 
   const fetchTransactions = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/plaid/transactions/sync', {
+      const response = await fetch(`${BASE_URL}/api/plaid/transactions/sync`, {
         method: 'POST',
       });
       const data = await response.json();
@@ -164,10 +165,10 @@ const BankConnection = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                      ${account.balances.current?.toFixed(2) || '0.00'}
+                      ₹{account.balances.current?.toFixed(2) || '0.00'}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                      Available: ${account.balances.available?.toFixed(2) || '0.00'}
+                      Available: ₹{account.balances.available?.toFixed(2) || '0.00'}
                     </p>
                   </div>
                 </div>
@@ -238,7 +239,7 @@ const BankConnection = () => {
                         ? 'text-red-600 dark:text-red-400' 
                         : 'text-green-600 dark:text-green-400'
                     }`}>
-                      {txn.amount > 0 ? '-' : '+'}${Math.abs(txn.amount).toFixed(2)}
+                      {txn.amount > 0 ? '-' : '+'}₹{Math.abs(txn.amount).toFixed(2)}
                     </p>
                   </div>
                 </div>

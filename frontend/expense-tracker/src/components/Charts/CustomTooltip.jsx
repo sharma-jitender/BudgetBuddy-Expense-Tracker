@@ -11,7 +11,7 @@ const createCustomTooltip = (isDarkMode = false) => {
           <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             Amount:{" "}
             <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-              ${payload[0].value}
+              ₹{payload[0].value}
             </span>
           </p>
         </div>

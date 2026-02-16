@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BASE_URL } from '../utils/apipath';
 import DashboardLayout from '../components/layouts/DashboardLayout';
 
 const Subscriptions = () => {
@@ -13,8 +14,8 @@ const Subscriptions = () => {
 
   const fetchSubscriptions = async () => {
     try {
-      const token = localStorage.getItem('token'); // Adjust based on your auth
-      const response = await fetch('http://localhost:8000/api/subscriptions', {
+      const token = localStorage.getItem('token'); 
+      const response = await fetch(`${BASE_URL}/api/subscriptions`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -33,7 +34,7 @@ const Subscriptions = () => {
     setDetecting(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8000/api/subscriptions/detect', {
+      const response = await fetch(`${BASE_URL}/api/subscriptions/detect`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -105,7 +106,7 @@ const Subscriptions = () => {
                 Total Monthly Cost
               </p>
               <p className="mt-2 text-4xl font-bold text-gray-900 dark:text-white">
-                ${totalMonthly.toFixed(2)}
+                ₹{totalMonthly.toFixed(2)}
               </p>
               <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
                 {subscriptions.length} active {subscriptions.length !== 1 ? 'subscriptions' : 'subscription'}
@@ -159,7 +160,7 @@ const Subscriptions = () => {
                         </div>
                         {sub.occurrenceCount > 0 && (
                           <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                            {sub.occurrenceCount} payments • Total: ${sub.totalSpent.toFixed(2)}
+                            {sub.occurrenceCount} payments • Total: ₹{sub.totalSpent.toFixed(2)}
                           </p>
                         )}
                       </div>
@@ -167,7 +168,7 @@ const Subscriptions = () => {
                     
                     <div className="text-right">
                       <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                        ${sub.amount.toFixed(2)}
+                        ₹{sub.amount.toFixed(2)}
                       </p>
                       <p className={`text-sm mt-1 ${
                         isUpcoming 

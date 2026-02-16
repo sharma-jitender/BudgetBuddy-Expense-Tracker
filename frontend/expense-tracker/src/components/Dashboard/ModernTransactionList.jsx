@@ -31,7 +31,7 @@ const ModernTransactionList = ({ transactions, title, onSeeMore, maxItems = 5 })
 
       <div className="space-y-2">
         {transactions.slice(0, maxItems).map((item) => {
-          const isIncome = item.type === "income";
+          const isIncome = item.type === "income" || Number(item.amount) > 0;
           const amount = addThousandsSeprator(item.amount);
 
           return (
