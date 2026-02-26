@@ -1,4 +1,9 @@
-export const BASE_URL = import.meta.env.VITE_BASE_URL ?? "";
+const PRODUCTION_BACKEND = "https://budgetbuddy-expense-tracker-backend.onrender.com";
+const isProductionHost = typeof window !== "undefined" && window.location.hostname.includes("onrender.com");
+export const BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ??
+  import.meta.env.VITE_BASE_URL ??
+  (isProductionHost ? PRODUCTION_BACKEND : "");
 
 //utils/apiPaths.js
 export const API_PATHS = {
