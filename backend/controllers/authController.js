@@ -5,6 +5,11 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
+const findUserByEmail = (email) => {
+  const escaped = String(email).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return User.findOne({ email: new RegExp(`^${escaped}$`, 'i') });
+};
+
 exports.registerUser = async (req, res) => {
   const { fullName, email, password, profileImageUrl } = req.body;
   
@@ -13,7 +18,7 @@ exports.registerUser = async (req, res) => {
   }
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await findUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use' });
     }
@@ -41,7 +46,7 @@ exports.loginUser = async (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
   try {
-    const user = await User.findOne({ email });
+    const user = await findUserByEmail(email);
     if (!user || !(await user.comparePassword(password))) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }

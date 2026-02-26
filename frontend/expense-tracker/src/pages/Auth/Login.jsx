@@ -35,7 +35,7 @@ const Login = () => {
     //Login Api call
      try {
       const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
-        email,
+        email: email.trim().toLowerCase(),
         password,
       });
       const { token, user } = response.data;
