@@ -102,4 +102,4 @@ This project is licensed under the MIT License.
 
 Contributions Pull requests and suggestions are welcome! If you'd like to improve Budget Buddy, feel free to fork the repo and submit a PR.
 
-Live Link https://budgetbuddy-frontend-5zwl.onrender.com/login
+Live link : https://budgetbuddy-expense-tracker-frontend.onrender.com
