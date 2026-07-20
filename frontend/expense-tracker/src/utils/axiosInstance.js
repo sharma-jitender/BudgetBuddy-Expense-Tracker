@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
     },
 });
 
-//Request Interceptor
+
 axiosInstance.interceptors.request.use(
     (config) => {
         const accessToken = localStorage.getItem("token");
@@ -24,7 +24,7 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-//Response Interceptor 
+
 axiosInstance.interceptors.response.use (
      (response) => {
         return response;
@@ -33,7 +33,7 @@ axiosInstance.interceptors.response.use (
         //Handle common errors globally
         if(error.response) {
             if (error.response.status === 401) {
-                //Redirect to login page 
+                localStorage.removeItem("token");
                 window.location.href = "/login";
             } else if(error.response.status === 500) {
                 console.error ("Server error. Please try again later ");

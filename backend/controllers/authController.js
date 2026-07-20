@@ -5,8 +5,13 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
+const normalizeEmail = (email) => {
+  return String(email || '').trim().toLowerCase();
+};
+
 const findUserByEmail = (email) => {
-  const escaped = String(email).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const normalizedEmail = normalizeEmail(email);
+  const escaped = normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return User.findOne({ email: new RegExp(`^${escaped}$`, 'i') });
 };
 
@@ -18,14 +23,15 @@ exports.registerUser = async (req, res) => {
   }
 
   try {
-    const existingUser = await findUserByEmail(email);
+    const normalizedEmail = normalizeEmail(email);
+    const existingUser = await findUserByEmail(normalizedEmail);
     if (existingUser) {
       return res.status(400).json({ message: 'Email already in use' });
     }
 
     const user = await User.create({
       fullName,
-      email,
+      email: normalizedEmail,
       password,
       profileImageUrl,
     });
@@ -39,14 +45,15 @@ exports.registerUser = async (req, res) => {
     res.status(500).json({ message: 'Error registering user', error: err.message });
   }
 };
-
+exports.normalizeEmail = normalizeEmail;
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ message: 'All fields are required' });
   }
   try {
-    const user = await findUserByEmail(email);
+    const normalizedEmail = normalizeEmail(email);
+    const user = await findUserByEmail(normalizedEmail);
     if (!user || !(await user.comparePassword(password))) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
