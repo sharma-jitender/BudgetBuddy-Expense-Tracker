@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(uuid())
+  fullName        String
+  email           String    @unique
+  password        String
+  profileImageUrl String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  incomes  Income[]
+  expenses Expense[]
+  budgets  Budget[]
+
+  subscriptions Subscription[]
+}
+
+model Income {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchantName String?
+  pending      Boolean  @default(false)
+  source       String?
+  icon         String?
+  title        String
+  amount       Float
+  date         DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Expense {
+  id             String        @id @default(uuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchantName   String?
+  pending        Boolean       @default(false)
+  icon           String?
+  title          String
+  category       String
+  amount         Float
+  date           DateTime      @default(now())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+}
+
+model Budget {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  month          String
+  overallLimit   Float
+  categoryLimits Json
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, month])
+}
+
+enum SubscriptionFrequency {
+  daily
+  weekly
+  monthly
+  yearly
+}
+
+enum DetectionMethod {
+  auto
+  manual
+}
+
+enum SubscriptionStatus {
+  active
+  cancelled
+}
+
+model Subscription {
+  id                  String                @id @default(uuid())
+  userId              String
+  user                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name                String
+  amount              Decimal               @db.Decimal(10, 2)
+  frequency           SubscriptionFrequency @default(monthly)
+  nextBillingDate     DateTime
+  category            String                @default("Subscription")
+  merchantName        String?
+  icon                String                @default("💳")
+  detectionMethod     DetectionMethod       @default(auto)
+  status              SubscriptionStatus    @default(active)
+  reminderEnabled     Boolean               @default(true)
+  reminderDaysBefore  Int                   @default(3)
+  lastReminderSent    DateTime?
+  totalSpent          Decimal               @db.Decimal(10, 2) @default(0)
+  occurrenceCount     Int                   @default(0)
+
+  relatedExpenses     Expense[]
+
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+}

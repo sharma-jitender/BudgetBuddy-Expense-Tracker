@@ -10,3 +10,5 @@ build/
 *.xlsx
 uploads/
 .DS_Store
+backend/.env
+frontend/expense-tracker/.env

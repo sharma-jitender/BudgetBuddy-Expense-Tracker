@@ -109,7 +109,7 @@ const Budget = () => {
     <DashboardLayout activeMenu="Budget">
       <div className="my-5 mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-white-800">
             Budget Management
           </h1>
           <button
@@ -132,20 +132,20 @@ const Budget = () => {
         )}
 
         {!showForm && (
-          <div className="mb-6 bg-white rounded-lg shadow-md p-4">
+          <div className="mb-6 bg-white dark:bg-transparent rounded-lg shadow-md dark:shadow-none p-4">
             <div className="flex items-center justify-between">
               <button
                 onClick={() => handleMonthChange("prev")}
-                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 ← Previous
               </button>
-              <h2 className="text-lg font-semibold text-gray-800">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-50">
                 {formatMonth(selectedMonth)}
               </h2>
               <button
                 onClick={() => handleMonthChange("next")}
-                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 Next →
               </button>
@@ -162,11 +162,11 @@ const Budget = () => {
 
         {!budgetData?.overallLimit && !showForm && (
           <div className="text-center py-12">
-            <div className="bg-gray-50 rounded-lg p-8">
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8">
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-50 mb-2">
                 No Budget Set
               </h3>
-              <p className="text-gray-500 mb-4">
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
                 Set a monthly budget to track your spending and stay on top of
                 your finances.
               </p>

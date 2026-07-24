@@ -7,25 +7,10 @@ const IncomeSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-
-    plaidTransactionId: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
-    plaidAccountId: {
-      type: String,
-    },
     merchantName: { type: String },
     pending: { type: Boolean, default: false },
-    dataSource: {
-      type: String,
-      enum: ["manual", "plaid"],
-      default: "manual",
-    },
     source: { type: String },
     icon: { type: String },
-   
     title: { type: String, required: true },
     amount: { type: Number, required: true },
     date: { type: Date, required: true },

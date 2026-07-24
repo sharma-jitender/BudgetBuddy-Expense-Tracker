@@ -9,7 +9,6 @@ An expense tracking web application that helps users manage their finances by re
 - Transaction history with date filtering
 - Budget management and spending alerts
 - User authentication and secure access
-- Bank account integration (optional)
 - Subscription detection and tracking
 - Excel export functionality
 
@@ -102,4 +101,4 @@ This project is licensed under the MIT License.
 
 Contributions Pull requests and suggestions are welcome! If you'd like to improve Budget Buddy, feel free to fork the repo and submit a PR.
 
-Live link : https://budgetbuddy-expense-tracker-frontend.onrender.com
+Live link : 

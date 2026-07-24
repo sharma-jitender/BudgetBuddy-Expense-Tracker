@@ -1,24 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const Subscription = require('../models/Subscription');
-const Expense = require('../models/Expense');
+const prisma = require('../config/prismaClient');
 const { protect } = require('../middleware/authMiddleware');
 const { detectRecurringTransactions, saveSubscriptions } = require('../services/subscriptionDetector');
 
 router.get('/', protect, async (req, res) => {
   try {
-    const subscriptions = await Subscription.find({
-      userId: req.user._id,
-      status: 'active',
-    }).sort({ nextBillingDate: 1 });
+    const subscriptions = await prisma.subscription.findMany({
+      where: { userId: req.user.id, status: 'active' },
+      orderBy: { nextBillingDate: 'asc' },
+    });
 
     const monthlyTotal = subscriptions.reduce((total, sub) => {
-      let monthlyAmount = sub.amount;
-      
-      if (sub.frequency === 'weekly') monthlyAmount = sub.amount * 4;
-      else if (sub.frequency === 'yearly') monthlyAmount = sub.amount / 12;
-      else if (sub.frequency === 'daily') monthlyAmount = sub.amount * 30;
-      
+      let monthlyAmount = Number(sub.amount);
+
+      if (sub.frequency === 'weekly') monthlyAmount = Number(sub.amount) * 4;
+      else if (sub.frequency === 'yearly') monthlyAmount = Number(sub.amount) / 12;
+      else if (sub.frequency === 'daily') monthlyAmount = Number(sub.amount) * 30;
+
       return total + monthlyAmount;
     }, 0);
 
@@ -36,9 +35,9 @@ router.get('/', protect, async (req, res) => {
 router.post('/detect', protect, async (req, res) => {
   try {
     console.log('Detecting subscriptions...');
-    
-    const detected = await detectRecurringTransactions(req.user._id);
-    const saved = await saveSubscriptions(req.user._id, detected);
+
+    const detected = await detectRecurringTransactions(req.user.id);
+    const saved = await saveSubscriptions(req.user.id, detected);
 
     console.log(`Subscriptions detected: ${detected.length}, saved: ${saved.length}`);
 
@@ -55,29 +54,28 @@ router.post('/detect', protect, async (req, res) => {
 
 router.get('/debug/expenses', protect, async (req, res) => {
   try {
-    const ninetyDaysAgo = new Date();
-    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 120);
+    const oneHundredTwentyDaysAgo = new Date();
+    oneHundredTwentyDaysAgo.setDate(oneHundredTwentyDaysAgo.getDate() - 120);
 
-    const expenses = await Expense.find({
-      userId: req.user._id,
-      date: { $gte: ninetyDaysAgo },
-    }).sort({ date: -1 });
+    const expenses = await prisma.expense.findMany({
+      where: { userId: req.user.id, date: { gte: oneHundredTwentyDaysAgo } },
+      orderBy: { date: 'desc' },
+    });
 
     console.log(`[DEBUG] Found ${expenses.length} expenses`);
     expenses.forEach(exp => {
-      console.log(`[DEBUG] ${exp.title || exp.merchantName}: $${exp.amount} on ${exp.date.toISOString().split('T')[0]}, dataSource: ${exp.dataSource}, category: ${exp.category}`);
+      console.log(`[DEBUG] ${exp.title || exp.merchantName}: $${exp.amount} on ${exp.date.toISOString().split('T')[0]}, category: ${exp.category}`);
     });
 
     res.json({
       count: expenses.length,
       expenses: expenses.map(e => ({
-        _id: e._id,
+        id: e.id,
         title: e.title,
         merchantName: e.merchantName,
         amount: e.amount,
         date: e.date,
         category: e.category,
-        dataSource: e.dataSource,
       })),
     });
   } catch (error) {
@@ -90,18 +88,18 @@ router.post('/', protect, async (req, res) => {
   try {
     const { name, amount, frequency, nextBillingDate, category, icon } = req.body;
 
-    const subscription = new Subscription({
-      userId: req.user._id,
-      name,
-      amount,
-      frequency,
-      nextBillingDate: new Date(nextBillingDate),
-      category: category || 'Subscription',
-      icon: icon || '💳',
-      detectionMethod: 'manual',
+    const subscription = await prisma.subscription.create({
+      data: {
+        userId: req.user.id,
+        name,
+        amount,
+        frequency,
+        nextBillingDate: new Date(nextBillingDate),
+        category: category || 'Subscription',
+        icon: icon || '💳',
+        detectionMethod: 'manual',
+      },
     });
-
-    await subscription.save();
 
     res.json({ success: true, subscription });
   } catch (error) {
@@ -112,19 +110,20 @@ router.post('/', protect, async (req, res) => {
 
 router.put('/:id', protect, async (req, res) => {
   try {
-    const subscription = await Subscription.findOne({
-      _id: req.params.id,
-      userId: req.user._id,
+    const subscription = await prisma.subscription.findFirst({
+      where: { id: req.params.id, userId: req.user.id },
     });
 
     if (!subscription) {
       return res.status(404).json({ error: 'Subscription not found' });
     }
 
-    Object.assign(subscription, req.body);
-    await subscription.save();
+    const updated = await prisma.subscription.update({
+      where: { id: subscription.id },
+      data: req.body,
+    });
 
-    res.json({ success: true, subscription });
+    res.json({ success: true, subscription: updated });
   } catch (error) {
     console.error('Error updating subscription:', error);
     res.status(500).json({ error: error.message });
@@ -133,17 +132,18 @@ router.put('/:id', protect, async (req, res) => {
 
 router.delete('/:id', protect, async (req, res) => {
   try {
-    const subscription = await Subscription.findOne({
-      _id: req.params.id,
-      userId: req.user._id,
+    const subscription = await prisma.subscription.findFirst({
+      where: { id: req.params.id, userId: req.user.id },
     });
 
     if (!subscription) {
       return res.status(404).json({ error: 'Subscription not found' });
     }
 
-    subscription.status = 'cancelled';
-    await subscription.save();
+    await prisma.subscription.update({
+      where: { id: subscription.id },
+      data: { status: 'cancelled' },
+    });
 
     res.json({ success: true, message: 'Subscription cancelled' });
   } catch (error) {
@@ -157,11 +157,14 @@ router.get('/upcoming', protect, async (req, res) => {
     const sevenDaysFromNow = new Date();
     sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
 
-    const upcoming = await Subscription.find({
-      userId: req.user._id,
-      status: 'active',
-      nextBillingDate: { $lte: sevenDaysFromNow },
-    }).sort({ nextBillingDate: 1 });
+    const upcoming = await prisma.subscription.findMany({
+      where: {
+        userId: req.user.id,
+        status: 'active',
+        nextBillingDate: { lte: sevenDaysFromNow },
+      },
+      orderBy: { nextBillingDate: 'asc' },
+    });
 
     res.json({ upcoming });
   } catch (error) {

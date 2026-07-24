@@ -23,7 +23,7 @@ const Navbar = ({ activeMenu }) => {
               <HiOutlineMenu className="text-2xl" />
             )}
           </button>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-50">Expense Tracker</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-50">Budget Buddy</h2>
         </div>
         
         <button

@@ -31,12 +31,14 @@ const ModernTransactionList = ({ transactions, title, onSeeMore, maxItems = 5 })
 
       <div className="space-y-2">
         {transactions.slice(0, maxItems).map((item) => {
-          const isIncome = item.type === "income" || Number(item.amount) > 0;
-          const amount = addThousandsSeprator(item.amount);
+          const rawAmount = Number(item.amount) || 0;
+          const typeStr = item.type ? String(item.type).toLowerCase() : null;
+          const isIncome = typeStr ? typeStr === "income" : rawAmount > 0;
+          const amount = addThousandsSeprator(Math.abs(rawAmount));
 
           return (
             <div
-              key={item._id}
+              key={item.id}
               className="group flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all cursor-pointer"
             >
               {/* Icon with muted background */}

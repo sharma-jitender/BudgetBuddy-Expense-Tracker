@@ -4,8 +4,7 @@ export const BASE_URL =
   import.meta.env.VITE_API_BASE_URL ??
   import.meta.env.VITE_BASE_URL ??
   (isProductionHost ? PRODUCTION_BACKEND : "");
-
-//utils/apiPaths.js
+  
 export const API_PATHS = {
   AUTH: {
     LOGIN: "/api/v1/auth/login",

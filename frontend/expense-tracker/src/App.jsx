@@ -16,7 +16,6 @@ import Analytics from "./pages/Dashboard/Analytics";
 import UserProvider from "./context/UserContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { Toaster } from "react-hot-toast";
-import BankConnection from "./pages/BankConnection";
 import Subscriptions from "./pages/Subscriptions";
 
 const App = () => {
@@ -34,7 +33,6 @@ const App = () => {
               <Route path="/expense" exact element={<Expense />} />
               <Route path="/budget" exact element={<Budget />} />
               <Route path="/analytics" exact element={<Analytics />} />
-              <Route path="/bank-connection" exact element={<BankConnection />} />
               <Route path="/subscriptions" exact element={<Subscriptions />} />
             </Routes>
           </Router>

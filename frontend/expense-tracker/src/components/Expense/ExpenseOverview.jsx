@@ -3,7 +3,7 @@ import { LuPlus } from "react-icons/lu";
 import { prepareExpenseLineChartData } from "../../utils/helper";
 import CustomLineChart from "../Charts/CustomLineChart";
 
-const ExpenseOverview = ({transactions, onAddExpense}) => {
+const ExpenseOverview = ({transactions}) => {
     const [chartData, setChartData] = useState();
     const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -34,10 +34,7 @@ const ExpenseOverview = ({transactions, onAddExpense}) => {
                 </p>
             </div>
 
-            <button className="add-btn" onClick={onAddExpense}>
-                <LuPlus className="text-lg"/>
-                Add Expense
-            </button>
+            
         </div>
 
         <div className="mt-10">

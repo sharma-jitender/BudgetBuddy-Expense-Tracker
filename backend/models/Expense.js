@@ -7,22 +7,8 @@ const ExpenseSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-
-    plaidTransactionId: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
-    plaidAccountId: {
-      type: String,
-    },
     merchantName: { type: String },
     pending: { type: Boolean, default: false },
-    dataSource: {
-      type: String,
-      enum: ["manual", "plaid"],
-      default: "manual",
-    },
     icon: { type: String },
     title: { type: String, required: true }, 
     category: { type: String, required: true },

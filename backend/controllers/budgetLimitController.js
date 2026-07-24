@@ -1,17 +1,19 @@
-const BudgetLimit = require("../models/BudgetLimit");
-const Expense = require("../models/Expense");
-const { Types } = require("mongoose");
+const prisma = require("../config/prismaClient");
 
 exports.getCurrentBudgetLimit = async (req, res) => {
   try {
     const userId = req.user.id;
     const currentMonth = new Date().toISOString().slice(0, 7);
 
-    let budgetLimit = await BudgetLimit.findOne({
-      userId: new Types.ObjectId(userId),
-      month: currentMonth,
-      isActive: true,
+    const budgetLimit = await prisma.budget.findFirst({
+      where: {
+        userId,
+        month: currentMonth,
+        isActive: true,
+      },
     });
+
+   
 
     if (!budgetLimit) {
       return res.json({
@@ -26,32 +28,39 @@ exports.getCurrentBudgetLimit = async (req, res) => {
     }
 
     const startOfMonth = new Date(currentMonth + "-01");
-    const endOfMonth = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0);
+    const endOfMonth = new Date(
+      startOfMonth.getFullYear(),
+      startOfMonth.getMonth() + 1,
+      0,
+    );
 
-    const expenses = await Expense.find({
-      userId: new Types.ObjectId(userId),
-      date: {
-        $gte: startOfMonth,
-        $lte: endOfMonth,
+    const expenses = await prisma.expense.findMany({
+      where: {
+        userId,
+        date: { gte: startOfMonth, lte: endOfMonth },
       },
     });
 
-    const currentSpending = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const currentSpending = expenses.reduce(
+      (sum, e) => sum + Number(e.amount),
+      0,
+    );
 
     const categorySpending = {};
     expenses.forEach((expense) => {
-      if (categorySpending[expense.category]) {
-        categorySpending[expense.category] += expense.amount;
-      } else {
-        categorySpending[expense.category] = expense.amount;
-      }
+      const amt = Number(expense.amount);
+      categorySpending[expense.category] =
+        (categorySpending[expense.category] || 0) + amt;
     });
 
-    const overallProgress = budgetLimit.overallLimit > 0 ? (currentSpending / budgetLimit.overallLimit) * 100 : 0;
-    const isOverBudget = currentSpending > budgetLimit.overallLimit;
+    const overallLimit = Number(budgetLimit.overallLimit);
+    const overallProgress =
+      overallLimit > 0 ? (currentSpending / overallLimit) * 100 : 0;
+    const isOverBudget = currentSpending > overallLimit;
 
     res.json({
-      ...budgetLimit.toObject(),
+      ...budgetLimit,
+      overallLimit,
       currentSpending,
       categorySpending,
       isOverBudget,
@@ -70,51 +79,61 @@ exports.setBudgetLimit = async (req, res) => {
     const selectedMonth = month || new Date().toISOString().slice(0, 7);
 
     if (month && !/^\d{4}-\d{2}$/.test(month)) {
-      return res.status(400).json({ message: "Invalid month format. Use YYYY-MM" });
+      return res
+        .status(400)
+        .json({ message: "Invalid month format. Use YYYY-MM" });
     }
 
     if (!overallLimit || overallLimit < 0) {
-      return res.status(400).json({ message: "Overall limit must be a positive number" });
+      return res
+        .status(400)
+        .json({ message: "Overall limit must be a positive number" });
     }
 
     if (categoryLimits && !Array.isArray(categoryLimits)) {
-      return res.status(400).json({ message: "Category limits must be an array" });
+      return res
+        .status(400)
+        .json({ message: "Category limits must be an array" });
     }
 
     if (categoryLimits) {
       for (const catLimit of categoryLimits) {
         if (!catLimit.category || !catLimit.limit || catLimit.limit < 0) {
-          return res.status(400).json({ 
-            message: "Each category limit must have a valid category name and positive limit" 
+          return res.status(400).json({
+            message:
+              "Each category limit must have a valid category name and positive limit",
           });
         }
       }
-    }
 
-    if (categoryLimits) {
-      const totalCategoryLimits = categoryLimits.reduce((sum, cat) => sum + cat.limit, 0);
+      const totalCategoryLimits = categoryLimits.reduce(
+        (sum, cat) => sum + cat.limit,
+        0,
+      );
       if (totalCategoryLimits > overallLimit) {
-        return res.status(400).json({ 
-          message: "Total category limits cannot exceed overall budget limit" 
+        return res.status(400).json({
+          message: "Total category limits cannot exceed overall budget limit",
         });
       }
     }
 
-    const budgetLimit = await BudgetLimit.findOneAndUpdate(
-      {
-        userId: new Types.ObjectId(userId),
-        month: selectedMonth,
+    const budgetLimit = await prisma.budget.upsert({
+      where: {
+        userId_month: { userId, month: selectedMonth },
       },
-      {
+      update: {
         overallLimit,
         categoryLimits: categoryLimits || [],
         isActive: true,
       },
-      {
-        upsert: true,
-        new: true,
-      }
-    );
+      create: {
+        userId,
+        month: selectedMonth,
+        overallLimit,
+        categoryLimits: categoryLimits || [],
+        isActive: true,
+      },
+    });
 
     res.json(budgetLimit);
   } catch (error) {
@@ -129,13 +148,13 @@ exports.getBudgetLimitByMonth = async (req, res) => {
     const { month } = req.params;
 
     if (!month || !/^\d{4}-\d{2}$/.test(month)) {
-      return res.status(400).json({ message: "Invalid month format. Use YYYY-MM" });
+      return res
+        .status(400)
+        .json({ message: "Invalid month format. Use YYYY-MM" });
     }
 
-    const budgetLimit = await BudgetLimit.findOne({
-      userId: new Types.ObjectId(userId),
-      month,
-      isActive: true,
+    const budgetLimit = await prisma.budget.findFirst({
+      where: { userId, month, isActive: true },
     });
 
     if (!budgetLimit) {
@@ -151,32 +170,39 @@ exports.getBudgetLimitByMonth = async (req, res) => {
     }
 
     const startOfMonth = new Date(month + "-01");
-    const endOfMonth = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0);
+    const endOfMonth = new Date(
+      startOfMonth.getFullYear(),
+      startOfMonth.getMonth() + 1,
+      0,
+    );
 
-    const expenses = await Expense.find({
-      userId: new Types.ObjectId(userId),
-      date: {
-        $gte: startOfMonth,
-        $lte: endOfMonth,
+    const expenses = await prisma.expense.findMany({
+      where: {
+        userId,
+        date: { gte: startOfMonth, lte: endOfMonth },
       },
     });
 
-    const currentSpending = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const currentSpending = expenses.reduce(
+      (sum, e) => sum + Number(e.amount),
+      0,
+    );
 
     const categorySpendingTwo = {};
     expenses.forEach((expense) => {
-      if (categorySpendingTwo[expense.category]) {
-        categorySpendingTwo[expense.category] += expense.amount;
-      } else {
-        categorySpendingTwo[expense.category] = expense.amount;
-      }
+      const amt = Number(expense.amount);
+      categorySpendingTwo[expense.category] =
+        (categorySpendingTwo[expense.category] || 0) + amt;
     });
 
-    const overallProgress = budgetLimit.overallLimit > 0 ? (currentSpending / budgetLimit.overallLimit) * 100 : 0;
-    const isOverBudget = currentSpending > budgetLimit.overallLimit;
+    const overallLimit = Number(budgetLimit.overallLimit);
+    const overallProgress =
+      overallLimit > 0 ? (currentSpending / overallLimit) * 100 : 0;
+    const isOverBudget = currentSpending > overallLimit;
 
     res.json({
-      ...budgetLimit.toObject(),
+      ...budgetLimit,
+      overallLimit,
       currentSpending,
       categorySpending: categorySpendingTwo,
       isOverBudget,
@@ -194,16 +220,20 @@ exports.deleteBudgetLimit = async (req, res) => {
     const { month } = req.params;
 
     if (!month || !/^\d{4}-\d{2}$/.test(month)) {
-      return res.status(400).json({ message: "Invalid month format. Use YYYY-MM" });
+      return res
+        .status(400)
+        .json({ message: "Invalid month format. Use YYYY-MM" });
     }
 
-    const result = await BudgetLimit.findOneAndDelete({
-      userId: new Types.ObjectId(userId),
-      month,
-    });
-
-    if (!result) {
-      return res.status(404).json({ message: "Budget limit not found" });
+    try {
+      await prisma.budget.delete({
+        where: { userId_month: { userId, month } },
+      });
+    } catch (err) {
+      if (err.code === "P2025") {
+        return res.status(404).json({ message: "Budget limit not found" });
+      }
+      throw err;
     }
 
     res.json({ message: "Budget limit deleted successfully" });
@@ -219,59 +249,76 @@ exports.checkBudgetBeforeExpense = async (req, res) => {
     const { amount, category } = req.body;
     const currentMonth = new Date().toISOString().slice(0, 7);
 
-    const budgetLimit = await BudgetLimit.findOne({
-      userId: new Types.ObjectId(userId),
-      month: currentMonth,
-      isActive: true,
+    const budgetLimit = await prisma.budget.findFirst({
+      where: { userId, month: currentMonth, isActive: true },
     });
 
     if (!budgetLimit) {
-      return res.json({ 
-        canAdd: true, 
+      return res.json({
+        canAdd: true,
         warnings: [],
         overallProgress: 0,
-        categoryProgress: 0 
+        categoryProgress: 0,
       });
     }
 
     const startOfMonth = new Date(currentMonth + "-01");
-    const endOfMonth = new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0);
+    const endOfMonth = new Date(
+      startOfMonth.getFullYear(),
+      startOfMonth.getMonth() + 1,
+      0,
+    );
 
-    const expenses = await Expense.find({
-      userId: new Types.ObjectId(userId),
-      date: {
-        $gte: startOfMonth,
-        $lte: endOfMonth,
+    const expenses = await prisma.expense.findMany({
+      where: {
+        userId,
+        date: { gte: startOfMonth, lte: endOfMonth },
       },
     });
 
-    const currentSpending = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const currentSpending = expenses.reduce(
+      (sum, e) => sum + Number(e.amount),
+      0,
+    );
     const newTotalSpending = currentSpending + amount;
 
     const categorySpending = expenses
-      .filter(expense => expense.category === category)
-      .reduce((sum, expense) => sum + expense.amount, 0);
+      .filter((e) => e.category === category)
+      .reduce((sum, e) => sum + Number(e.amount), 0);
     const newCategorySpending = categorySpending + amount;
 
     const warnings = [];
     let canAdd = true;
 
-    const overallProgress = (newTotalSpending / budgetLimit.overallLimit) * 100;
-    if (newTotalSpending > budgetLimit.overallLimit) {
-      warnings.push(`This expense would exceed your overall monthly budget by $${(newTotalSpending - budgetLimit.overallLimit).toFixed(2)}`);
+    const overallLimit = Number(budgetLimit.overallLimit);
+    const overallProgress = (newTotalSpending / overallLimit) * 100;
+    if (newTotalSpending > overallLimit) {
+      warnings.push(
+        `This expense would exceed your overall monthly budget by $${(newTotalSpending - overallLimit).toFixed(2)}`,
+      );
       canAdd = false;
     } else if (overallProgress > 90) {
-      warnings.push(`This expense would use ${overallProgress.toFixed(1)}% of your monthly budget`);
+      warnings.push(
+        `This expense would use ${overallProgress.toFixed(1)}% of your monthly budget`,
+      );
     }
 
-    const categoryLimit = budgetLimit.categoryLimits.find(cat => cat.category === category);
+    const categoryLimits = budgetLimit.categoryLimits || [];
+    const categoryLimit = categoryLimits.find(
+      (cat) => cat.category === category,
+    );
+    let categoryProgress = 0;
     if (categoryLimit) {
-      const categoryProgress = (newCategorySpending / categoryLimit.limit) * 100;
+      categoryProgress = (newCategorySpending / categoryLimit.limit) * 100;
       if (newCategorySpending > categoryLimit.limit) {
-        warnings.push(`This expense would exceed your ${category} budget by $${(newCategorySpending - categoryLimit.limit).toFixed(2)}`);
+        warnings.push(
+          `This expense would exceed your ${category} budget by $${(newCategorySpending - categoryLimit.limit).toFixed(2)}`,
+        );
         canAdd = false;
       } else if (categoryProgress > 90) {
-        warnings.push(`This expense would use ${categoryProgress.toFixed(1)}% of your ${category} budget`);
+        warnings.push(
+          `This expense would use ${categoryProgress.toFixed(1)}% of your ${category} budget`,
+        );
       }
     }
 
@@ -279,7 +326,7 @@ exports.checkBudgetBeforeExpense = async (req, res) => {
       canAdd,
       warnings,
       overallProgress: Math.round(overallProgress * 100) / 100,
-      categoryProgress: categoryLimit ? Math.round((newCategorySpending / categoryLimit.limit) * 100 * 100) / 100 : 0,
+      categoryProgress: Math.round(categoryProgress * 100) / 100,
     });
   } catch (error) {
     console.error("Error checking budget:", error);
